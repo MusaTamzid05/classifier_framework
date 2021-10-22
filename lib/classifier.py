@@ -1,3 +1,4 @@
+from lib.utils import limit_gpu
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.layers import MaxPooling2D
@@ -8,6 +9,7 @@ from tensorflow.keras.layers import Dropout
 
 class Classifier:
     def __init__(self, data_preprocessor):
+        limit_gpu()
         self.data_preprocessor = data_preprocessor
         self._init_model()
 
@@ -38,6 +40,20 @@ class Classifier:
         model.compile(loss = loss_type, optimizer = "adam", metrics = ["acc"])
 
         self.model = model
+
+    def fit(self, epochs = 100, batch_size = 32):
+
+        history = self.model.fit(
+                self.data_preprocessor.train_x,
+                self.data_preprocessor.train_y,
+                validation_data = (
+                    self.data_preprocessor.test_x,
+                    self.data_preprocessor.test_y
+                    ),
+                batch_size = batch_size,
+                epochs = epochs
+                )
+
 
 
 

@@ -40,7 +40,6 @@ class DataPreprocessor:
                 random_state = 42
                 )
 
-        return self.train_x, self.test_x, self.train_y, self.test_y
 
 
 
