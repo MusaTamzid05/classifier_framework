@@ -29,8 +29,10 @@ class DataPreprocessor:
 
         self.num_classes = len(np.unique(labels))
         labels = self._process_labels(labels = labels)
-
         print(images.shape, labels.shape)
+        self._init_class_weight(labels = labels)
+
+        print(self.class_weight)
 
 
 
@@ -61,4 +63,13 @@ class DataPreprocessor:
     def _process_labels(self, labels):
         self.label_encoder = LabelEncoder().fit(labels)
         return to_categorical(self.label_encoder.transform(labels), self.num_classes)
+
+    def _init_class_weight(self, labels):
+        class_total = labels.sum(axis = 0)
+        class_weight = {}
+
+        for i in range(0, len(class_total)):
+            class_weight[i] = class_total.max() / class_total[i]
+
+        self.class_weight = class_weight
 
