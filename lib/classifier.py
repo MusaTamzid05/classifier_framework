@@ -54,6 +54,10 @@ class Classifier:
                 epochs = epochs
                 )
 
+    def save(self, model_path):
+        self.model.save(model_path)
+
+
 
 
 
