@@ -25,6 +25,20 @@ class Classifier:
 
         model.add(Flatten())
         model.add(Dense(128, activation = "relu"))
-        model.add(Dense(3))
-
+        model.add(Dense(self.data_preprocessor.num_classes, activation = "softmax"))
         model.summary()
+
+        loss_type = None
+
+        if self.data_preprocessor.num_classes == 2:
+            loss_type = "binary_crossentropy"
+        else:
+            loss_type = "categorical_crossentropy"
+
+        model.compile(loss = loss_type, optimizer = "adam", metrics = ["acc"])
+
+        self.model = model
+
+
+
+
