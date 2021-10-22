@@ -29,9 +29,11 @@ class Classifier:
         model = Sequential()
         model.add(Conv2D(16, 3, padding = "same", input_shape = (self.data_preprocessor.image_size, self.data_preprocessor.image_size, 1), activation = "relu"))
         model.add(MaxPooling2D())
+        model.add(Dropout(0.2))
 
         model.add(Conv2D(32, 3, padding = "same", activation = "relu"))
         model.add(MaxPooling2D())
+        model.add(Dropout(0.2))
 
         model.add(Conv2D(64, 3, padding = "same", activation = "relu"))
         model.add(MaxPooling2D())
@@ -62,6 +64,7 @@ class Classifier:
                     self.data_preprocessor.test_x,
                     self.data_preprocessor.test_y
                     ),
+                class_weight = self.data_preprocessor.class_weight,
                 batch_size = batch_size,
                 epochs = epochs
                 )
