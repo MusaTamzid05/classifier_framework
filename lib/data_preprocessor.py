@@ -16,12 +16,17 @@ class DataPreprocessor:
 
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image = cv2.resize(image, (self.image_size, self.image_size))
-
         image = img_to_array(image)
-
+        image /= 255
         return image
 
     def fit(self):
+        images, labels = self._load_image_and_labels()
+
+        print(images.shape, labels.shape)
+
+
+    def _load_image_and_labels(self):
         images, labels = [], []
 
         for label_dir in os.listdir(self.dir_path):
@@ -29,6 +34,10 @@ class DataPreprocessor:
             current_image = self._load_images_from(dir_path = os.path.join(self.dir_path, label_dir))
             images += current_image
             labels += [label_dir for i in range(len(current_image))]
+
+
+        return np.array(images), np.array(labels)
+
 
 
 
