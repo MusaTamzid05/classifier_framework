@@ -6,6 +6,7 @@ from tensorflow.keras.utils import to_categorical
 import numpy as np
 
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
 
 class DataPreprocessor:
     def __init__(self, image_size, dir_path = None):
@@ -24,15 +25,23 @@ class DataPreprocessor:
         image /= 255
         return image
 
-    def fit(self):
+    def fit(self, test_size = 0.2):
         images, labels = self._load_image_and_labels()
 
         self.num_classes = len(np.unique(labels))
         labels = self._process_labels(labels = labels)
-        print(images.shape, labels.shape)
         self._init_class_weight(labels = labels)
 
-        print(self.class_weight)
+        self.train_x, self.test_x, self.train_y, self.test_y = train_test_split(
+                images,
+                labels,
+                test_size = test_size,
+                stratify = labels,
+                random_state = 42
+                )
+
+        return self.train_x, self.test_x, self.train_y, self.test_y
+
 
 
 
