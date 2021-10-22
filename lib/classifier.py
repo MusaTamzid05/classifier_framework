@@ -79,7 +79,7 @@ class Classifier:
         processed_image = self.data_preprocessor.process_image(image = image)
         processed_image = np.expand_dims(processed_image, axis = 0)
         predictions = self.model.predict(processed_image)
-        print(self.data_preprocessor.decode(predictions))
+        return self.data_preprocessor.decode(predictions)
 
 
 

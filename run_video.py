@@ -19,7 +19,9 @@ def main():
             running = False
             continue
 
-        cls.predict(frame)
+        prediction = cls.predict(frame)[0][0]
+
+        cv2.putText(frame, prediction, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
         cv2.imshow("test", frame)
 
