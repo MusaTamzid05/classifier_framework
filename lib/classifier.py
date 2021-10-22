@@ -1,17 +1,29 @@
 from lib.utils import limit_gpu
 from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import load_model
 from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.layers import MaxPooling2D
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Dropout
 
+import numpy as np
+import pickle
 
 class Classifier:
-    def __init__(self, data_preprocessor):
+    def __init__(self, data_preprocessor, model_path = None):
         limit_gpu()
         self.data_preprocessor = data_preprocessor
-        self._init_model()
+
+        if model_path is None:
+            self._init_model()
+            return
+
+        self.model = load_model(model_path)
+
+        with open("encoder.pickle", "rb") as f:
+            self.data_preprocessor.label_encoder = pickle.load(f)
+
 
     def _init_model(self):
         model = Sequential()
@@ -56,6 +68,15 @@ class Classifier:
 
     def save(self, model_path):
         self.model.save(model_path)
+
+        with open("encoder.pickle", "wb") as f:
+            pickle.dump(self.data_preprocessor.label_encoder, f)
+
+    def predict(self, image):
+        processed_image = self.data_preprocessor.process_image(image = image)
+        processed_image = np.expand_dims(processed_image, axis = 0)
+        predictions = self.model.predict(processed_image)
+        print(self.data_preprocessor.decode(predictions))
 
 
 

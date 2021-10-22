@@ -83,6 +83,6 @@ class DataPreprocessor:
         self.class_weight = class_weight
 
     def decode(self, encoded_label):
-        return self.label_encoder.inverse_transform([encoded_label])
+        return self.label_encoder.inverse_transform(encoded_label)
 
 
