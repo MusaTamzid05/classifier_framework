@@ -7,7 +7,9 @@ def main():
 
     print(train_x.shape, train_y.shape, test_x.shape, test_y.shape)
 
-    cls = Classifier(data_preprocessor = preprocessor)
+    print(preprocessor.decode(encoded_label = test_y[0]))
+
+    #cls = Classifier(data_preprocessor = preprocessor)
 
 
 if __name__ == "__main__":

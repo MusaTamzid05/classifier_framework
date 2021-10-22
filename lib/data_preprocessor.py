@@ -1,11 +1,11 @@
 import cv2
 import os
 from tensorflow.keras.preprocessing.image import img_to_array
-from tensorflow.keras.utils import to_categorical
+#from tensorflow.keras.utils import to_categorical
 
 import numpy as np
 
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 
 class DataPreprocessor:
@@ -52,7 +52,7 @@ class DataPreprocessor:
             print(f"Loading from {label_dir}")
             current_image = self._load_images_from(dir_path = os.path.join(self.dir_path, label_dir))
             images += current_image
-            labels += [label_dir for i in range(len(current_image))]
+            labels += [[label_dir] for i in range(len(current_image))]
 
         return np.array(images), np.array(labels)
 
@@ -70,15 +70,20 @@ class DataPreprocessor:
         return images
 
     def _process_labels(self, labels):
-        self.label_encoder = LabelEncoder().fit(labels)
-        return to_categorical(self.label_encoder.transform(labels), self.num_classes)
+        self.label_encoder = OneHotEncoder().fit(labels)
+        return self.label_encoder.transform(labels).toarray()
 
     def _init_class_weight(self, labels):
         class_total = labels.sum(axis = 0)
         class_weight = {}
 
+
         for i in range(0, len(class_total)):
             class_weight[i] = class_total.max() / class_total[i]
 
         self.class_weight = class_weight
+
+    def decode(self, encoded_label):
+        return self.label_encoder.inverse_transform([encoded_label])
+
 
