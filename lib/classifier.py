@@ -20,6 +20,7 @@ class Classifier:
         self.encoder_name = "encoder.pickle"
         self.model_name = "model.h5"
         self.image_info_name = "info.json"
+        self.image_size_key = "image_size"
 
         if model_dir_path is None:
             self._init_model()
@@ -34,6 +35,11 @@ class Classifier:
 
         with open(os.path.join(model_dir_path, self.encoder_name), "rb") as f:
             self.data_preprocessor.label_encoder = pickle.load(f)
+
+
+        with open(os.path.join(model_dir_path, self.image_info_name), "r") as f:
+            info = json.load(f)
+            self.data_preprocessor.image_size = info[self.image_size_key]
 
 
 
@@ -93,7 +99,7 @@ class Classifier:
         with open(os.path.join(model_dir_path, self.encoder_name ), "wb") as f:
             pickle.dump(self.data_preprocessor.label_encoder, f)
 
-        info = {"image_size" : self.data_preprocessor.image_size}
+        info = {self.image_size_key : self.data_preprocessor.image_size}
         json_obj = json.dumps(info)
 
         with open(os.path.join(model_dir_path, self.image_info_name), "w") as f:
