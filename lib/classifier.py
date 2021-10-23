@@ -9,20 +9,34 @@ from tensorflow.keras.layers import Dropout
 
 import numpy as np
 import pickle
+import os
+import json
 
 class Classifier:
-    def __init__(self, data_preprocessor, model_path = None):
+    def __init__(self, data_preprocessor, model_dir_path = None):
         limit_gpu()
         self.data_preprocessor = data_preprocessor
 
-        if model_path is None:
+        self.encoder_name = "encoder.pickle"
+        self.model_name = "model.h5"
+        self.image_info_name = "info.json"
+
+        if model_dir_path is None:
             self._init_model()
             return
 
-        self.model = load_model(model_path)
 
-        with open("encoder.pickle", "rb") as f:
+        self._load(model_dir_path = model_dir_path)
+
+    def _load(self, model_dir_path):
+
+        self.model = load_model(os.path.join(model_dir_path, self.model_name))
+
+        with open(os.path.join(model_dir_path, self.encoder_name), "rb") as f:
             self.data_preprocessor.label_encoder = pickle.load(f)
+
+
+
 
 
     def _init_model(self):
@@ -69,11 +83,23 @@ class Classifier:
                 epochs = epochs
                 )
 
-    def save(self, model_path):
-        self.model.save(model_path)
+    def save(self, model_dir_path):
 
-        with open("encoder.pickle", "wb") as f:
+        if os.path.isdir(model_dir_path) == False:
+            os.mkdir(model_dir_path)
+
+        self.model.save(os.path.join(model_dir_path, "model.h5"))
+
+        with open(os.path.join(model_dir_path, self.encoder_name ), "wb") as f:
             pickle.dump(self.data_preprocessor.label_encoder, f)
+
+        info = {"image_size" : self.data_preprocessor.image_size}
+        json_obj = json.dumps(info)
+
+        with open(os.path.join(model_dir_path, self.image_info_name), "w") as f:
+            f.write(json_obj)
+
+
 
     def predict(self, image):
         processed_image = self.data_preprocessor.process_image(image = image)

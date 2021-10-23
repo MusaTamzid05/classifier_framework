@@ -8,7 +8,7 @@ def main():
 
     cls = Classifier(data_preprocessor = preprocessor)
     cls.fit(batch_size = 64, epochs = 30)
-    cls.save("./model.h5")
+    cls.save("./model_data/refactor_model")
 
 
 if __name__ == "__main__":
