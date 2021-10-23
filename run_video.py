@@ -6,7 +6,7 @@ from lib.data_preprocessor import DataPreprocessor
 def main():
     limit_gpu()
     data_preprocessor = DataPreprocessor(image_size = 224)
-    cls = Classifier(data_preprocessor = data_preprocessor, model_path = "model.h5")
+    cls = Classifier(data_preprocessor = data_preprocessor, model_dir_path= "model_data/refactor_model")
     running = True
 
     cam = cv2.VideoCapture(0)
