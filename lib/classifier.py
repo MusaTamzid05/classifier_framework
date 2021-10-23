@@ -1,16 +1,17 @@
 from lib.utils import limit_gpu
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.models import load_model
-from tensorflow.keras.layers import Conv2D
-from tensorflow.keras.layers import MaxPooling2D
+
+from tensorflow import keras
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Dropout
+from tensorflow.keras.models import load_model
+
 
 import numpy as np
 import pickle
 import os
 import json
+
+from tensorflow.keras.applications import VGG16
 
 class Classifier:
     def __init__(self, data_preprocessor, model_dir_path = None):
@@ -46,23 +47,17 @@ class Classifier:
 
 
     def _init_model(self):
-        model = Sequential()
-        model.add(Conv2D(16, 3, padding = "same", input_shape = (self.data_preprocessor.image_size, self.data_preprocessor.image_size, 1), activation = "relu"))
-        model.add(MaxPooling2D())
-        model.add(Dropout(0.2))
 
-        model.add(Conv2D(32, 3, padding = "same", activation = "relu"))
-        model.add(MaxPooling2D())
-        model.add(Dropout(0.2))
+        inputs = keras.Input(shape = (self.data_preprocessor.image_size, self.data_preprocessor.image_size, 3))
 
-        model.add(Conv2D(64, 3, padding = "same", activation = "relu"))
-        model.add(MaxPooling2D())
-        model.add(Dropout(0.2))
+        base_model = VGG16(weights = "imagenet", include_top = False, input_shape = (self.data_preprocessor.image_size, self.data_preprocessor.image_size, 3))
+        base_model.trainable = False
 
-        model.add(Flatten())
-        model.add(Dense(128, activation = "relu"))
-        model.add(Dense(self.data_preprocessor.num_classes, activation = "softmax"))
-        model.summary()
+        x = base_model(inputs, training = False)
+        x = Flatten()(x)
+        outputs = Dense(self.data_preprocessor.num_classes)(x)
+
+        model = keras.Model(inputs, outputs)
 
         loss_type = None
 

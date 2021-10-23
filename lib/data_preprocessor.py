@@ -19,7 +19,7 @@ class DataPreprocessor:
         if type(image) == str:
             image = cv2.imread(image)
 
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        #image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image = cv2.resize(image, (self.image_size, self.image_size))
         image = img_to_array(image)
         image /= 255
